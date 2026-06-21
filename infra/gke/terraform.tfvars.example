@@ -1,0 +1,13 @@
+project_id   = "your-gcp-project-id"
+region       = "asia-northeast1"
+cluster_name = "argo-workflows-lab"
+node_count   = 2
+machine_type = "e2-standard-2"
+network_name = "argo-gke-vpc"
+subnetwork_name = "argo-gke-subnet"
+subnetwork_cidr = "10.10.0.0/20"
+pods_secondary_range_name = "gke-pods"
+pods_secondary_cidr = "10.20.0.0/16"
+services_secondary_range_name = "gke-services"
+services_secondary_cidr = "10.30.0.0/20"
+release_channel = "REGULAR"

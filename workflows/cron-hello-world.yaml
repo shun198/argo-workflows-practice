@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: cron-hello-world
+spec:
+  schedule: "*/5 * * * *"
+  timezone: "Asia/Tokyo"
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  workflowSpec:
+    entrypoint: main
+    templates:
+      - name: main
+        container:
+          image: alpine:3.20
+          command: [sh, -c]
+          args: ["echo 'hello from cron workflow' && date"]

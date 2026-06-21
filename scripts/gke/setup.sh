@@ -75,6 +75,8 @@ gcloud container clusters get-credentials "${CLUSTER_NAME}" \
   --region "${REGION}" \
   --project "${PROJECT_ID}"
 
+# 1) create --dry-run=client -o yaml で「作成マニフェストだけ」を生成し（実作成はしない）
+# 2) その YAML を apply することで、初回は作成・2回目以降は unchanged になり安全に再実行できる
 kubectl create namespace "${ARGO_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Argo Workflows ${ARGO_VERSION} をインストールします"
@@ -83,6 +85,7 @@ kubectl apply -n "${ARGO_NAMESPACE}" -f "https://raw.githubusercontent.com/argop
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/workflow-controller --timeout=300s
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/argo-server --timeout=300s
 
+# namespace 作成を冪等化するため、上と同じく dry-run + apply で適用する
 kubectl create namespace "${ARGOCD_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
 echo "Argo CD ${ARGOCD_VERSION} をインストールします"
 kubectl apply -n "${ARGOCD_NAMESPACE}" -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"

@@ -3,7 +3,8 @@ kind: CronWorkflow
 metadata:
   name: cron-hello-world
 spec:
-  schedule: "*/5 * * * *"
+  schedules:
+    - "*/5 * * * *"
   timezone: "Asia/Tokyo"
   concurrencyPolicy: "Forbid"
   successfulJobsHistoryLimit: 3

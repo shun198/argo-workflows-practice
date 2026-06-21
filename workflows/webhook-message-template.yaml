@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: webhook-message-template
+spec:
+  entrypoint: main
+  arguments:
+    parameters:
+      - name: message
+        value: "hello from argo events"
+  templates:
+    - name: main
+      inputs:
+        parameters:
+          - name: message
+      container:
+        image: alpine:3.20
+        command: [sh, -c]
+        args:
+          - |
+            echo "received message: {{inputs.parameters.message}}"
+            date

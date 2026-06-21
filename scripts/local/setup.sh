@@ -4,9 +4,9 @@ set -euo pipefail
 
 CLUSTER_NAME="${CLUSTER_NAME:-argo-local}"
 ARGO_NAMESPACE="${ARGO_NAMESPACE:-argo}"
-ARGO_VERSION="${ARGO_VERSION:-v3.6.8}"
+ARGO_VERSION="${ARGO_VERSION:-v4.0.7}"
 ARGOCD_NAMESPACE="${ARGOCD_NAMESPACE:-argocd}"
-ARGOCD_VERSION="${ARGOCD_VERSION:-v2.14.11}"
+}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KIND_CONFIG_FILE="${SCRIPT_DIR}/kind-config.yaml"
 
@@ -27,6 +27,8 @@ else
   echo "kind クラスタ ${CLUSTER_NAME} は既に存在します"
 fi
 
+# 1) create --dry-run=client -o yaml で「作成マニフェストだけ」を生成し（実作成はしない）
+# 2) その YAML を apply することで、初回は作成・2回目以降は unchanged になり安全に再実行できる
 kubectl create namespace "${ARGO_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Argo Workflows ${ARGO_VERSION} をインストールします"
@@ -37,6 +39,7 @@ kubectl apply -n "${ARGO_NAMESPACE}" -f "https://raw.githubusercontent.com/argop
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/workflow-controller --timeout=180s
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/argo-server --timeout=180s
 
+# namespace 作成を冪等化するため、上と同じく dry-run + apply で適用する
 kubectl create namespace "${ARGOCD_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
 echo "Argo CD ${ARGOCD_VERSION} をインストールします"
 kubectl apply -n "${ARGOCD_NAMESPACE}" -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"

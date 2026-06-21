@@ -9,6 +9,8 @@ NODE_COUNT="${NODE_COUNT:-2}"
 MACHINE_TYPE="${MACHINE_TYPE:-e2-standard-2}"
 ARGO_NAMESPACE="${ARGO_NAMESPACE:-argo}"
 ARGO_VERSION="${ARGO_VERSION:-v3.6.8}"
+ARGOCD_NAMESPACE="${ARGOCD_NAMESPACE:-argocd}"
+ARGOCD_VERSION="${ARGOCD_VERSION:-v2.14.11}"
 TF_DIR="${TF_DIR:-infra/gke}"
 TF_STATE_BUCKET="${TF_STATE_BUCKET:-}"
 TF_STATE_PREFIX="${TF_STATE_PREFIX:-argo-workflows-practice/gke}"
@@ -81,5 +83,12 @@ kubectl apply -n "${ARGO_NAMESPACE}" -f "https://raw.githubusercontent.com/argop
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/workflow-controller --timeout=300s
 kubectl -n "${ARGO_NAMESPACE}" rollout status deployment/argo-server --timeout=300s
 
+kubectl create namespace "${ARGOCD_NAMESPACE}" --dry-run=client -o yaml | kubectl apply -f -
+echo "Argo CD ${ARGOCD_VERSION} をインストールします"
+kubectl apply -n "${ARGOCD_NAMESPACE}" -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"
+kubectl -n "${ARGOCD_NAMESPACE}" rollout status deployment/argocd-server --timeout=600s
+
 echo "セットアップ完了"
 echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f workflows/hello-world.yaml"
+echo "Argo CD UI: kubectl -n ${ARGOCD_NAMESPACE} port-forward svc/argocd-server 8080:443"
+echo "Argo CD 初期パスワード: kubectl -n ${ARGOCD_NAMESPACE} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode; echo"

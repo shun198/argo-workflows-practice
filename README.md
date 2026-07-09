@@ -153,6 +153,9 @@ terraform -chdir=infra/gke apply \
 
 ## Argo Events を試す
 
+kind 前提では、Argo Events のリソースを `argo-events` namespace、起動される Workflow を `argo` namespace に分けると責務が分かりやすく、Argo Workflows の既存セットアップとも合わせやすいです。
+この構成では Sensor が `argo-events` から `argo` に `Workflow` を作成するため、専用 ServiceAccount と RBAC が必要です。
+
 1) Argo Events をインストール
 
 ```bash
@@ -161,17 +164,22 @@ kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-
 kubectl apply -n argo-events -f https://raw.githubusercontent.com/argoproj/argo-events/stable/manifests/install-validating-webhook.yaml
 ```
 
-2) EventBus / EventSource / Sensor / RBAC / WorkflowTemplate を作成
+2) WorkflowTemplate を作成
 
 ```bash
-kubectl apply -n argo-events -f events/eventbus.yaml
-kubectl apply -n argo -f workflows/webhook-message-template.yaml
-kubectl apply -f events/rbac-sensor-workflow-trigger.yaml
-kubectl apply -n argo-events -f events/eventsource-webhook.yaml
-kubectl apply -n argo-events -f events/sensor-webhook-workflow.yaml
+kubectl apply -f workflows/webhook-message-template.yaml
 ```
 
-3) Webhook でイベント送信
+3) EventBus / EventSource / Sensor / RBAC を作成
+
+```bash
+kubectl apply -f events/eventbus.yaml
+kubectl apply -f events/rbac-sensor-workflow-trigger.yaml
+kubectl apply -f events/eventsource-webhook.yaml
+kubectl apply -f events/sensor-webhook-workflow.yaml
+```
+
+4) Webhook でイベント送信
 
 ```bash
 kubectl -n argo-events port-forward svc/webhook-eventsource-svc 12000:12000
@@ -185,11 +193,19 @@ curl -X POST http://localhost:12000/hook \
   -d '{"message":"hello from webhook"}'
 ```
 
-4) Workflow 作成を確認
+5) Workflow 作成を確認
 
 ```bash
 kubectl get wf -n argo
 kubectl get pods -n argo-events
+```
+
+Sensor の権限を確認したい場合:
+
+```bash
+kubectl auth can-i create workflows.argoproj.io \
+  --as=system:serviceaccount:argo-events:sensor-workflow-trigger-sa \
+  -n argo
 ```
 
 ## Argo CD コンソールへアクセス

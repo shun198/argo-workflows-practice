@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: webhook-workflow-sensor
+  namespace: argo-events
+spec:
+  eventBusName: default
+  template:
+    serviceAccountName: sensor-workflow-trigger-sa
+  dependencies:
+    - name: webhook-dep
+      eventSourceName: webhook
+      eventName: example
+  triggers:
+    - template:
+        name: webhook-workflow-trigger
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: webhook-event-
+                namespace: argo
+              spec:
+                workflowTemplateRef:
+                  name: webhook-message-template
+                arguments:
+                  parameters:
+                    - name: message
+                      value: "fallback message"
+          parameters:
+            - src:
+                dependencyName: webhook-dep
+                dataKey: body.message
+              dest: spec.arguments.parameters.0.value

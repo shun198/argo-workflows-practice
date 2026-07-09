@@ -173,10 +173,10 @@ kubectl apply -f kubernetes/workflows/webhook-message-template.yaml
 3) EventBus / EventSource / Sensor / RBAC を作成
 
 ```bash
-kubectl apply -f events/eventbus.yaml
-kubectl apply -f events/rbac-sensor-workflow-trigger.yaml
-kubectl apply -f events/eventsource-webhook.yaml
-kubectl apply -f events/sensor-webhook-workflow.yaml
+kubectl apply -f kubernetes/events/eventbus.yaml
+kubectl apply -f kubernetes/events/rbac-sensor-workflow-trigger.yaml
+kubectl apply -f kubernetes/events/eventsource-webhook.yaml
+kubectl apply -f kubernetes/events/sensor-webhook-workflow.yaml
 ```
 
 4) Webhook でイベント送信

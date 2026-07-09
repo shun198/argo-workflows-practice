@@ -19,5 +19,5 @@ spec:
         command: [sh, -c]
         args:
           - |
-            echo "received message: {{inputs.parameters.message}}"
+            echo "received message: '{{ "{{inputs.parameters.message}}" }}'"
             date

@@ -45,6 +45,8 @@ kubectl create namespace "${ARGOCD_NAMESPACE}" --dry-run=client -o yaml | kubect
 echo "Argo CD ${ARGOCD_VERSION} をインストールします"
 kubectl apply -n "${ARGOCD_NAMESPACE}" --server-side -f "https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"
 kubectl -n "${ARGOCD_NAMESPACE}" rollout status deployment/argocd-server --timeout=300s
+# Argo CD アプリケーションを作成
+kubectl apply -n "${ARGOCD_NAMESPACE}" -f argocd/application.yaml
 
 echo "セットアップ完了"
 echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f kubernetes/workflows/hello-world.yaml"

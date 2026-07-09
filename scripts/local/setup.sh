@@ -49,7 +49,7 @@ kubectl -n "${ARGOCD_NAMESPACE}" rollout status deployment/argocd-server --timeo
 kubectl apply -n "${ARGOCD_NAMESPACE}" -f argocd/application.yaml
 
 echo "セットアップ完了"
-echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f kubernetes/workflows/hello-world.yaml"
+echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f kubernetes/templates/workflows/hello-world.yaml"
 echo "Argo Workflows UI: kubectl -n ${ARGO_NAMESPACE} port-forward service/argo-server 2746:2746"
 echo "Argo CD UI: kubectl -n ${ARGOCD_NAMESPACE} port-forward svc/argocd-server 8080:443"
 # https://argo-workflows.readthedocs.io/en/latest/access-token/#token-creation

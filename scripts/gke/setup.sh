@@ -92,6 +92,6 @@ kubectl apply -n "${ARGOCD_NAMESPACE}" -f "https://raw.githubusercontent.com/arg
 kubectl -n "${ARGOCD_NAMESPACE}" rollout status deployment/argocd-server --timeout=600s
 
 echo "セットアップ完了"
-echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f workflows/hello-world.yaml"
+echo "サンプル実行: kubectl create -n ${ARGO_NAMESPACE} -f kubernetes/workflows/hello-world.yaml"
 echo "Argo CD UI: kubectl -n ${ARGOCD_NAMESPACE} port-forward svc/argocd-server 8080:443"
 echo "Argo CD 初期パスワード: kubectl -n ${ARGOCD_NAMESPACE} get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 --decode; echo"

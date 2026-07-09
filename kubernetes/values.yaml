@@ -1,0 +1,15 @@
+namespaces:
+  workflows: argo
+  events: argo-events
+
+eventSource:
+  webhook:
+    port: 12000
+    endpoint: /hook
+    method: POST
+
+workflowTemplate:
+  messageParameterName: message
+
+sensor:
+  serviceAccountName: sensor-workflow-trigger-sa

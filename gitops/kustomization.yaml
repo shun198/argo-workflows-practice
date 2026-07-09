@@ -1,9 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-  - ../workflows/webhook-message-template.yaml
-  - ../events/eventbus.yaml
-  - ../events/rbac-sensor-workflow-trigger.yaml
-  - ../events/eventsource-webhook.yaml
-  - ../events/sensor-webhook-workflow.yaml

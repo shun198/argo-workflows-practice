@@ -1,0 +1,6 @@
+apiVersion: v2
+name: argo-workflows-practice
+description: A Helm chart for Argo Workflows practice resources
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

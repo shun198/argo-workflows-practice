@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows-practice
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/shun198/argo-workflows-practice.git
+    targetRevision: main
+    path: gitops
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
